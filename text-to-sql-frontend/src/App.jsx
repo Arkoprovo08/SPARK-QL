@@ -1,28 +1,31 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar'; // Make sure Navbar.jsx exists
 import './App.css';
+import api from './api.js'
+
 
 function App() {
   const [mode, setMode] = useState('light');
   const [prompt, setPrompt] = useState('');
-  const [sql, setSql] = useState('');
-  const [history, setHistory] = useState([]);
 
   const toggleMode = () => {
-    setMode(mode === 'light' ? 'dark' : 'light');
+    setMode(mode === 'dark' ? 'dark' : 'light');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!prompt.trim()) return;
 
-    // Simulate SQL generation (replace with actual API call)
-    const generatedSQL = `SELECT * FROM users WHERE prompt = '${prompt}';`;
-    setSql(generatedSQL);
 
-    // Update history
-    setHistory([{ prompt, sql: generatedSQL }, ...history]);
-  };
+  const handleSubmit = async (e) =>{
+     e.preventDefault();
+
+    console.log(`Before sending the prompt to server ${prompt}`);
+    try {
+      await api.post('/generate', {'content':prompt});
+    } catch (error) {
+      console.error("Error sending prompt to server", error);
+    }
+
+  }
+
 
   return (
     <div className={`app ${mode}`}>
@@ -32,13 +35,6 @@ function App() {
         {/* Sidebar */}
         <aside className="sidebar">
           <h2>Search History</h2>
-          <ul>
-            {history.map((item, index) => (
-              <li key={index}>
-                {item.prompt}
-              </li>
-            ))}
-          </ul>
         </aside>
 
         {/* Main Content */}
@@ -65,12 +61,6 @@ function App() {
               </div>
             </form>
 
-            {sql && (
-              <div className="preview">
-                <h3>Generated SQL:</h3>
-                <pre>{sql}</pre>
-              </div>
-            )}
           </div>
         </main>
       </div>

@@ -17,8 +17,6 @@ export default function Navbar({ mode, toggleMode }) {
           </label>
         </div>
 
-        {/* 🚀 CTA Button */}
-        <button className="cta-button">Try Demo 🚀</button>
       </div>
     </div>
   );
